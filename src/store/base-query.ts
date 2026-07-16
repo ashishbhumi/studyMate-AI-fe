@@ -2,7 +2,7 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 // import type { RootState } from "./store";
 
-const baseQuery = fetchBaseQuery({
+export const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000",
   // prepareHeaders: (headers: Headers, { getState }) => {
   //   // const state = getState() as RootState;
@@ -18,6 +18,7 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   const result = await baseQuery(args, api, extraOptions);
+
   if (result.error?.status === 401) {
     // Handle logout logic here
     console.log("Unauthorized, logging out...");

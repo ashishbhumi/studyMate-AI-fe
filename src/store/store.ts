@@ -3,37 +3,13 @@ import {
   configureStore,
   type ThunkAction,
 } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+
 import rootReducer from "./rootReducer";
 import { ApiMiddleware } from "./middleware";
-
-const persistConfig = {
-  key: "root",
-  storage,
-  whitelist: [
-    "outlet",
-    "client",
-    "role",
-    "whitelabel",
-    "auth",
-    "client",
-    "outlet",
-    "outletDropdown",
-    "sidebar",
-    "permissions",
-    "settings",
-    "qrCodeData",
-    "createOrder",
-    "draftOrder",
-    "deliveryBroadcast",
-  ],
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+import persistStore from "redux-persist/es/persistStore";
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
