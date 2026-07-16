@@ -1,19 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import type { RootState } from "./store";
+import type { RootState } from "./store";
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000",
-  // prepareHeaders: (headers: Headers, { getState }) => {
-  //   // const state = getState() as RootState;
-  //   // const token = state.auth?.token;
+  prepareHeaders: (headers: Headers, { getState }) => {
+    const state = getState() as RootState;
+    const token = state.auth?.token;
+    const userId = state.auth?.userId;
 
-  //   // if (token) {
-  //   //   headers.set("Authorization", `Bearer ${token}`);
-  //   // }
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    if (userId) {
+      headers.set("user-id", userId.toString());
+    }
 
-  //   return headers;
-  // },
+    return headers;
+  },
 });
 
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {

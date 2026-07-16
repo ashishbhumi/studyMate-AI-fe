@@ -8,6 +8,9 @@ export interface ApiResponse<T> {
 export interface AuthDataInterface {
   accessToken: string;
   refreshToken: string;
+  userId: number;
+  name: string;
+  email: string;
 }
 
 export type AuthResponseInterface = ApiResponse<AuthDataInterface>;

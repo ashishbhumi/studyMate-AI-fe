@@ -38,7 +38,15 @@ const Login = () => {
         password,
       }).unwrap();
 
-      dispatch(LOGIN({ accessToken: response.data.accessToken, rememberMe }));
+      dispatch(
+        LOGIN({
+          accessToken: response.data.accessToken,
+          userId: response.data.userId,
+          name: response.data.name,
+          email: response.data.email,
+          rememberMe,
+        }),
+      );
       navigate("/dashboard");
     } catch {
       setError("Login failed. Please check your credentials.");

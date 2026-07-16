@@ -6,4 +6,14 @@ export const ROUTES = {
     FORGOT_PASSWORD: "/forgot-password",
   },
   DASHBOARD: "/dashboard",
+  FOLDERS: {
+    LIST: "/dashboard/folders",
+  },
+  NOTES: {
+    LIST: "/dashboard/notes",
+    DETAIL: "/dashboard/notes/:id",
+  },
+  TAGS: {
+    LIST: "/dashboard/tags",
+  },
 };

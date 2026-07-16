@@ -45,7 +45,13 @@ const Signup = () => {
       }).unwrap();
 
       dispatch(
-        LOGIN({ accessToken: response.data.accessToken, rememberMe: false }),
+        LOGIN({
+          accessToken: response.data.accessToken,
+          userId: response.data.userId,
+          name: response.data.name,
+          email: response.data.email,
+          rememberMe: false,
+        }),
       );
       navigate("/dashboard");
     } catch {

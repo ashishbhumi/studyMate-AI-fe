@@ -1,12 +1,31 @@
 import { useNavigate } from "react-router-dom";
-import { FolderOpenDot, LogOut, Settings, User } from "lucide-react";
+import {
+  FolderOpenDot,
+  LogOut,
+  Settings,
+  User,
+  FileText,
+  Tag as TagIcon,
+} from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { LOGOUT } from "@/feature/auth/slices/auth-slice";
+import { useGetFoldersQuery } from "@/feature/folders/apis/folders-api";
+import { useGetNotesQuery } from "@/feature/notes/apis/notes-api";
+import { useGetTagsQuery } from "@/feature/tags/apis/tags-api";
+import { ROUTES } from "@/routes/routes";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  const { data: folders } = useGetFoldersQuery();
+  const { data: notesData } = useGetNotesQuery({ page: 1, limit: 1 });
+  const { data: tags } = useGetTagsQuery();
+
+  const totalFolders = folders?.length || 0;
+  const totalNotes = notesData?.total || 0;
+  const totalTags = tags?.length || 0;
 
   const handleLogout = () => {
     dispatch(LOGOUT());
@@ -62,41 +81,58 @@ const Dashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div
+            className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate(ROUTES.FOLDERS.LIST)}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-yellow-100 rounded-lg">
                 <FolderOpenDot className="h-6 w-6 text-yellow-600" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">12</span>
+              <span className="text-2xl font-bold text-gray-900">
+                {totalFolders}
+              </span>
             </div>
             <h3 className="text-sm font-medium text-gray-600">Total Folders</h3>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div
+            className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate(ROUTES.NOTES.LIST)}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-blue-100 rounded-lg">
-                <User className="h-6 w-6 text-blue-600" />
+                <FileText className="h-6 w-6 text-blue-600" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">48</span>
+              <span className="text-2xl font-bold text-gray-900">
+                {totalNotes}
+              </span>
             </div>
             <h3 className="text-sm font-medium text-gray-600">Total Notes</h3>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div
+            className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            onClick={() => navigate(ROUTES.TAGS.LIST)}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-green-100 rounded-lg">
-                <Settings className="h-6 w-6 text-green-600" />
+                <TagIcon className="h-6 w-6 text-green-600" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">8</span>
+              <span className="text-2xl font-bold text-gray-900">
+                {totalTags}
+              </span>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">AI Summaries</h3>
+            <h3 className="text-sm font-medium text-gray-600">Total Tags</h3>
           </div>
         </div>
 
         {/* Recent Activity */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Recent Activity
+            </h2>
           </div>
           <div className="p-6">
             <div className="text-center py-12">
