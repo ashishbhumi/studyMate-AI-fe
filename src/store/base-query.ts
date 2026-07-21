@@ -13,7 +13,7 @@ export const baseQuery = fetchBaseQuery({
       headers.set("Authorization", `Bearer ${token}`);
     }
     if (userId) {
-      headers.set("user-id", userId.toString());
+      headers.set("user-id", String(userId));
     }
 
     return headers;

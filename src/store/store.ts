@@ -6,7 +6,7 @@ import {
 
 import rootReducer from "./rootReducer";
 import { ApiMiddleware } from "./middleware";
-import persistStore from "redux-persist/es/persistStore";
+import { persistStore } from "redux-persist";
 
 export const store = configureStore({
   reducer: rootReducer,

@@ -51,7 +51,7 @@ export const tagsApi = createApi({
         body,
       }),
       transformResponse: (response: ApiResponse<TagInterface>) => response.data,
-      invalidatesTags: (_, error, { id }) => [{ type: "Tag", id }, "Tag"],
+      invalidatesTags: (_, _error, { id }) => [{ type: "Tag", id }, "Tag"],
     }),
 
     deleteTag: builder.mutation<void, number>({
@@ -59,7 +59,7 @@ export const tagsApi = createApi({
         url: `/tags/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (_, error, id) => [{ type: "Tag", id }, "Tag"],
+      invalidatesTags: (_, _error, id) => [{ type: "Tag", id }, "Tag"],
     }),
   }),
 });

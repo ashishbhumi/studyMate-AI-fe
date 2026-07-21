@@ -8,7 +8,7 @@ import FoldersList from "../feature/folders/components/FoldersList";
 import NotesList from "../feature/notes/components/NotesList";
 import NoteDetail from "../feature/notes/components/NoteDetail";
 import TagsList from "../feature/tags/components/TagsList";
-import Layout from "../feature/layout/components/Layout";
+import Layout from "../feature/layout/Layout";
 
 const RouteIndex = () => {
   return (

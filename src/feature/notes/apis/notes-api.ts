@@ -61,10 +61,7 @@ export const notesApi = createApi({
       }),
       transformResponse: (response: ApiResponse<NoteInterface>) =>
         response.data,
-      invalidatesTags: (result, error, { id }) => [
-        { type: "Note", id },
-        "Note",
-      ],
+      invalidatesTags: (_, __, { id }) => [{ type: "Note", id }, "Note"],
     }),
 
     deleteNote: builder.mutation<void, number>({
@@ -72,7 +69,7 @@ export const notesApi = createApi({
         url: `/notes/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Note", id }, "Note"],
+      invalidatesTags: (_, __, id) => [{ type: "Note", id }, "Note"],
     }),
 
     pinNote: builder.mutation<NoteInterface, number>({
@@ -82,7 +79,7 @@ export const notesApi = createApi({
       }),
       transformResponse: (response: ApiResponse<NoteInterface>) =>
         response.data,
-      invalidatesTags: (result, error, id) => [{ type: "Note", id }],
+      invalidatesTags: (_, __, id) => [{ type: "Note", id }],
     }),
 
     unpinNote: builder.mutation<NoteInterface, number>({
@@ -92,7 +89,7 @@ export const notesApi = createApi({
       }),
       transformResponse: (response: ApiResponse<NoteInterface>) =>
         response.data,
-      invalidatesTags: (result, error, id) => [{ type: "Note", id }],
+      invalidatesTags: (_, __, id) => [{ type: "Note", id }],
     }),
 
     archiveNote: builder.mutation<NoteInterface, number>({
@@ -102,7 +99,7 @@ export const notesApi = createApi({
       }),
       transformResponse: (response: ApiResponse<NoteInterface>) =>
         response.data,
-      invalidatesTags: (result, error, id) => [{ type: "Note", id }],
+      invalidatesTags: (_, __, id) => [{ type: "Note", id }],
     }),
 
     unarchiveNote: builder.mutation<NoteInterface, number>({
@@ -112,7 +109,7 @@ export const notesApi = createApi({
       }),
       transformResponse: (response: ApiResponse<NoteInterface>) =>
         response.data,
-      invalidatesTags: (result, error, id) => [{ type: "Note", id }],
+      invalidatesTags: (_, __, id) => [{ type: "Note", id }],
     }),
 
     attachTags: builder.mutation<
@@ -126,7 +123,18 @@ export const notesApi = createApi({
       }),
       transformResponse: (response: ApiResponse<NoteInterface>) =>
         response.data,
-      invalidatesTags: (result, error, { id }) => [{ type: "Note", id }],
+      invalidatesTags: (_, __, { id }) => [{ type: "Note", id }],
+    }),
+
+    summarizeNote: builder.mutation<{ summary: string }, number>({
+      query: (noteId) => ({
+        url: "/ai/summarize",
+        method: "POST",
+        body: { noteId },
+      }),
+      transformResponse: (response: ApiResponse<{ summary: string }>) =>
+        response.data,
+      invalidatesTags: (_, __, noteId) => [{ type: "Note", noteId }],
     }),
   }),
 });
@@ -142,4 +150,5 @@ export const {
   useArchiveNoteMutation,
   useUnarchiveNoteMutation,
   useAttachTagsMutation,
+  useSummarizeNoteMutation,
 } = notesApi;

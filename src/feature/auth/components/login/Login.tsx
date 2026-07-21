@@ -22,6 +22,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +32,8 @@ const Login = () => {
       setError("Enter a valid email and password to continue.");
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const response = await login({
@@ -50,7 +53,19 @@ const Login = () => {
       navigate("/dashboard");
     } catch {
       setError("Login failed. Please check your credentials.");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (error) setError("");
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (error) setError("");
   };
 
   return (
@@ -63,7 +78,10 @@ const Login = () => {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-yellow-500 shadow-lg">
             <FolderOpenDot className="h-5 w-5 text-gray-900" />
           </div>
-          <span className="text-lg font-semibold tracking-wide">
+          <span
+            className="text-lg font-semibold tracking-wide"
+            data-testid="brand-name"
+          >
             Study<span className="text-yellow-300">Mate</span> AI
           </span>
         </div>
@@ -108,7 +126,10 @@ const Login = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-yellow-700">
               Welcome back
             </p>
-            <h2 className="mt-2 text-3xl font-semibold text-gray-900">
+            <h2
+              className="mt-2 text-3xl font-semibold text-gray-900"
+              data-testid="login-heading"
+            >
               Log in to StudyMate AI
             </h2>
             <p className="mt-2 text-sm text-gray-600">
@@ -145,7 +166,7 @@ const Login = () => {
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   placeholder="you@university.edu"
                   className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-[3px] focus:ring-yellow-200"
                 />
@@ -166,7 +187,7 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={handlePasswordChange}
                   placeholder="Enter your password"
                   className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-yellow-500 focus:outline-none focus:ring-[3px] focus:ring-yellow-200"
                 />
@@ -174,6 +195,7 @@ const Login = () => {
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  data-testid="password-toggle"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? (
@@ -206,10 +228,10 @@ const Login = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isSubmitting || isLoading}
               className="w-full rounded-lg bg-yellow-500 py-3.5 text-sm font-bold text-gray-900 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Signing in..." : "Log in"}
+              {isSubmitting || isLoading ? "Signing in..." : "Log in"}
             </button>
           </form>
 
