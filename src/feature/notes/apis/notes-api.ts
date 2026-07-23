@@ -7,6 +7,10 @@ import type {
   AttachTagsInterface,
   NotesQueryInterface,
 } from "../interfaces/note.interface";
+import type {
+  FlashcardsResponse,
+  GenerateFlashcardsRequest,
+} from "../interfaces/flashcard.interface";
 import type { ApiResponse } from "@/feature/auth/interfaces/auth-response.interface";
 
 export const notesApi = createApi({
@@ -136,6 +140,33 @@ export const notesApi = createApi({
         response.data,
       invalidatesTags: (_, __, noteId) => [{ type: "Note", noteId }],
     }),
+
+    generateFlashcards: builder.mutation<
+      FlashcardsResponse,
+      GenerateFlashcardsRequest
+    >({
+      query: ({ noteId, count = 10, difficulty = "MEDIUM" }) => ({
+        url: "/flashcards/generate",
+        method: "POST",
+        body: { noteId, count, difficulty },
+      }),
+      transformResponse: (response: ApiResponse<FlashcardsResponse>) =>
+        response.data,
+      invalidatesTags: (_, __, { noteId }) => [{ type: "Note", noteId }],
+    }),
+
+    getFlashcardsByNote: builder.query<FlashcardsResponse, number>({
+      query: (noteId) => ({
+        url: `/flashcards/note/${noteId}`,
+        method: "GET",
+      }),
+      transformResponse: (response: ApiResponse<FlashcardsResponse>) =>
+        response.data,
+      providesTags: (_, __, noteId) => [
+        { type: "Note", id: noteId },
+        { type: "Note", id: "FLASHCARD" },
+      ],
+    }),
   }),
 });
 
@@ -151,4 +182,6 @@ export const {
   useUnarchiveNoteMutation,
   useAttachTagsMutation,
   useSummarizeNoteMutation,
+  useGenerateFlashcardsMutation,
+  useGetFlashcardsByNoteQuery,
 } = notesApi;

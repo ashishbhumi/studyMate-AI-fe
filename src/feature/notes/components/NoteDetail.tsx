@@ -6,10 +6,12 @@ import {
   useUnpinNoteMutation,
   useArchiveNoteMutation,
   useUnarchiveNoteMutation,
-  useSummarizeNoteMutation,
 } from "../apis/notes-api";
 import { useAppDispatch } from "@/store/hooks";
 import { openEditModal } from "../slices/notes-slice";
+import SummaryTab from "./tabs/SummaryTab";
+import FlashcardsTab from "./tabs/FlashcardsTab";
+import QuizTab from "./tabs/QuizTab";
 import {
   ArrowLeft,
   Pin,
@@ -20,6 +22,8 @@ import {
   Calendar,
   Tag,
   Sparkles,
+  RotateCcw,
+  HelpCircle,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -28,6 +32,9 @@ const NoteDetail = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [showMenu, setShowMenu] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    "content" | "summary" | "flashcards" | "quiz"
+  >("content");
 
   const noteId = parseInt(id || "0");
   const {
@@ -40,8 +47,6 @@ const NoteDetail = () => {
   const [unpinNote] = useUnpinNoteMutation();
   const [archiveNote] = useArchiveNoteMutation();
   const [unarchiveNote] = useUnarchiveNoteMutation();
-  const [summarizeNote, { isLoading: isSummarizing }] =
-    useSummarizeNoteMutation();
 
   const handleBack = () => {
     navigate(-1);
@@ -78,14 +83,6 @@ const NoteDetail = () => {
     setShowMenu(false);
   };
 
-  const handleSummarize = async () => {
-    try {
-      await summarizeNote(noteId);
-    } catch (error) {
-      console.error("Failed to generate summary:", error);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="p-6">
@@ -117,7 +114,7 @@ const NoteDetail = () => {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-4 mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
@@ -225,35 +222,80 @@ const NoteDetail = () => {
           </div>
         )}
 
-        {/* Summary */}
-        {note.summary ? (
-          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="text-sm font-semibold text-yellow-800 mb-2">
-              AI Summary
-            </h3>
-            <p className="text-sm text-yellow-700">{note.summary}</p>
-          </div>
-        ) : (
-          <div className="mb-6">
+        {/* Tabs */}
+        <div className="border-b border-gray-200 mb-6">
+          <nav className="flex space-x-8 overflow-x-auto">
             <button
-              onClick={handleSummarize}
-              disabled={isSummarizing || !note.content}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              onClick={() => setActiveTab("content")}
+              className={`flex items-center gap-2 px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "content"
+                  ? "border-purple-600 text-purple-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <FileText className="h-4 w-4" />
+              Content
+            </button>
+            <button
+              onClick={() => setActiveTab("summary")}
+              className={`flex items-center gap-2 px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "summary"
+                  ? "border-purple-600 text-purple-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
             >
               <Sparkles className="h-4 w-4" />
-              {isSummarizing ? "Generating..." : "Generate AI Summary"}
+              Summary
             </button>
+            <button
+              onClick={() => setActiveTab("flashcards")}
+              className={`flex items-center gap-2 px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "flashcards"
+                  ? "border-purple-600 text-purple-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <RotateCcw className="h-4 w-4" />
+              Flashcards
+            </button>
+            <button
+              onClick={() => setActiveTab("quiz")}
+              className={`flex items-center gap-2 px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "quiz"
+                  ? "border-purple-600 text-purple-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <HelpCircle className="h-4 w-4" />
+              Quiz
+            </button>
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "content" && (
+          <div className="prose max-w-none">
+            {note.content ? (
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {note.content}
+              </p>
+            ) : (
+              <p className="text-gray-400 italic">No content</p>
+            )}
           </div>
         )}
 
-        {/* Content */}
-        {note.content ? (
-          <div className="prose max-w-none">
-            <p className="text-gray-700 whitespace-pre-wrap">{note.content}</p>
-          </div>
-        ) : (
-          <p className="text-gray-400 italic">No content</p>
+        {activeTab === "summary" && (
+          <SummaryTab
+            noteId={noteId}
+            summary={note.summary}
+            content={note.content || ""}
+          />
         )}
+
+        {activeTab === "flashcards" && <FlashcardsTab noteId={noteId} />}
+
+        {activeTab === "quiz" && <QuizTab noteId={noteId} />}
       </div>
     </div>
   );
